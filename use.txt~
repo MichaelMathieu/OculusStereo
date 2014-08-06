@@ -1,0 +1,7 @@
+Reset cameras :
+- unplug
+- sudo rmmod uvcvideo
+- sudo modprobe uvcvideo
+- plug cameras
+- wait until light turns off
+- guvcview

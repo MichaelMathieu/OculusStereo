@@ -1,0 +1,22 @@
+Reset cameras :
+- unplug
+- sudo rmmod uvcvideo
+- sudo modprobe uvcvideo
+- plug cameras
+- wait until light turns off
+- guvcview (takes some time)
+- check it works : go to video, change webcam, check that both work
+- if it doesn't work, do every step again
+
+Run :
+- do not plug oculus usb (makes it crash)
+- cd Desktop/OculusSDK2
+- optirun ./OculusWorldDemo.sh
+- esc
+- move window to oculus screen (on the right)
+- put full screen in oculus
+- try not to ctrl-c the app, it tends to crash the driver (use alt-f4)
+
+If there is no video :
+- check that guvcview sees the streams
+- make clean && make (some black magic happens in the configuration files)
