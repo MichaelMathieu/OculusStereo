@@ -418,7 +418,7 @@ void DistortionRenderer::initBuffersAndShaders()
         for ( unsigned vertNum = 0; vertNum < meshData.VertexCount; vertNum++ )
         {
             pCurVBVert->Pos.x = pCurOvrVert->Pos.x;
-            pCurVBVert->Pos.y = pCurOvrVert->Pos.y+0.5;
+            pCurVBVert->Pos.y = pCurOvrVert->Pos.y; //+0.5
             pCurVBVert->TexR  = (*(Vector2f*)&pCurOvrVert->TexR);
             pCurVBVert->TexG  = (*(Vector2f*)&pCurOvrVert->TexG);
             pCurVBVert->TexB  = (*(Vector2f*)&pCurOvrVert->TexB);

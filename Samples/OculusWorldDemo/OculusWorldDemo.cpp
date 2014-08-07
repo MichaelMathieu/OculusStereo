@@ -111,7 +111,8 @@ int OculusWorldDemoApp::OnStartup(int argc, const char** argv)
 
     ovr_Initialize();
 
-    Hmd = ovrHmd_Create(0);
+    //Hmd = ovrHmd_Create(0);
+    Hmd = NULL;
     
     if (!Hmd)
     {
@@ -949,44 +950,6 @@ void OculusWorldDemoApp::RenderEyeView(ovrEyeType eye)
     Recti    renderViewport = EyeTexture[eye].Header.RenderViewport;
     Matrix4f viewAdjust     = Matrix4f::Translation(Vector3f(EyeRenderDesc[eye].ViewAdjust));
 
-
-    // *** 3D - Configures Viewport/Projection and Render
-    
-    //pRender->ApplyStereoParams(renderViewport, Projection[eye]);
-    //pRender->SetDepthMode(true, true);
-
-    //Matrix4f baseTranslate = Matrix4f::Translation(ThePlayer.BodyPos);
-    //Matrix4f baseYaw       = Matrix4f::RotationY(ThePlayer.BodyYaw.Get());
-
-    /*
-    if (GridDisplayMode != GridDisplay_GridOnly)
-    {
-        if (SceneMode != Scene_OculusCubes)
-        {
-            MainScene.Render(pRender, viewAdjust * View);        
-            RenderAnimatedBlocks(eye, ovr_GetTimeInSeconds());
-        }
-	    
-        if (SceneMode == Scene_Cubes)
-	    {
-            // Draw scene cubes overlay. Red if position tracked, blue otherwise.
-            Scene sceneCubes = (HmdStatus & ovrStatus_PositionTracked) ?
-                               RedCubesScene : BlueCubesScene;        
-            sceneCubes.Render(pRender, viewAdjust * View * baseTranslate * baseYaw);
-        }
-
-	    else if (SceneMode == Scene_OculusCubes)
-	    {
-            OculusCubesScene.Render(pRender, viewAdjust * View * baseTranslate * baseYaw);
-        }
-    }   
-
-    if (GridDisplayMode != GridDisplay_None)
-    {
-        RenderGrid(eye);
-    }
-    */
-
     // *** 2D Text - Configure Orthographic rendering.
 
     // Render UI in 2D orthographic coordinate system that maps [-1,1] range
@@ -1007,10 +970,11 @@ void OculusWorldDemoApp::RenderEyeView(ovrEyeType eye)
     cv::Mat image;
     cameras[icam]->read(image);
     int w = image.size().width, h = image.size().height;
-    unsigned char* imgdata = imgdatas[imgdatas_i];
+    unsigned char** imgdata_ptr = imgdatas + imgdatas_i;
     imgdatas_i = (imgdatas_i + 1) % 2;
-    if (imgdata == NULL)
-      imgdata = new unsigned char[4*w*h];
+    if (*imgdata_ptr == NULL)
+      *imgdata_ptr = new unsigned char[4*w*h];
+    unsigned char* imgdata = *imgdata_ptr;
     memset(imgdata, 0, w*h*4);
     for (int i = 0; i < w; ++i)
       for (int j = 0; j < h; ++j) {
