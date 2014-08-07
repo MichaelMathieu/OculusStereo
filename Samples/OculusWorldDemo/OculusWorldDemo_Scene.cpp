@@ -230,7 +230,7 @@ void OculusWorldDemoApp::PopulateVideo1() {
 }
 
 void OculusWorldDemoApp::InitCapture() {
-  cameras[0] = new cv::VideoCapture(0);
+  cameras[0] = new cv::VideoCapture(2);
   cameras[1] = new cv::VideoCapture(1);
 }
 

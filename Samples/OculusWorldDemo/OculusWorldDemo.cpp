@@ -953,11 +953,11 @@ void OculusWorldDemoApp::RenderEyeView(ovrEyeType eye)
 
     // *** 3D - Configures Viewport/Projection and Render
     
-    pRender->ApplyStereoParams(renderViewport, Projection[eye]);
-    pRender->SetDepthMode(true, true);
+    //pRender->ApplyStereoParams(renderViewport, Projection[eye]);
+    //pRender->SetDepthMode(true, true);
 
-    Matrix4f baseTranslate = Matrix4f::Translation(ThePlayer.BodyPos);
-    Matrix4f baseYaw       = Matrix4f::RotationY(ThePlayer.BodyYaw.Get());
+    //Matrix4f baseTranslate = Matrix4f::Translation(ThePlayer.BodyPos);
+    //Matrix4f baseYaw       = Matrix4f::RotationY(ThePlayer.BodyYaw.Get());
 
     /*
     if (GridDisplayMode != GridDisplay_GridOnly)
@@ -992,6 +992,7 @@ void OculusWorldDemoApp::RenderEyeView(ovrEyeType eye)
 
     // Render UI in 2D orthographic coordinate system that maps [-1,1] range
     // to a readable FOV area centered at your eye and properly adjusted.
+    //renderViewport.y -= 300;
     pRender->ApplyStereoParams(renderViewport, OrthoProjection[eye]);
     pRender->SetDepthMode(false, false);
 

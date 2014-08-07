@@ -180,6 +180,7 @@ void SensorCalibration::AutocalibrateGyro(MessageBodyFrame const& msg)
 
 void SensorCalibration::StoreAutoOffset()
 {
+  return;// prevents crash
     const double maxDeltaT = 2.5;
     const double minExtraDeltaT = 0.5;
     const UInt32 minDelay = 24 * 3600; // 1 day in seconds
@@ -229,7 +230,7 @@ void SensorCalibration::StoreAutoOffset()
         // if the newest sample is too recent - _update_ it if significantly closer to the target temp
         if (Abs(GyroAutoTemperature - newestReport.TargetTemperature) + minExtraDeltaT
             < Abs(newestReport.ActualTemperature - newestReport.TargetTemperature))
-        {
+	  {
             // (do not update the time!)
             newestReport.ActualTemperature = GyroAutoTemperature;
             newestReport.Offset = (Vector3d) GyroAutoOffset;
