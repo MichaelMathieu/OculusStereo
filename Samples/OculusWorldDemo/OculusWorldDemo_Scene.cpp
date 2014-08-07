@@ -49,46 +49,6 @@ void OculusWorldDemoApp::InitMainFilePath()
     }
 }
 
-// Creates a grid of cubes.
-void PopulateCubeFieldScene(Scene* scene, Fill* fill,
-                            int cubeCountX, int cubeCountY, int cubeCountZ, Vector3f offset,
-                            float cubeSpacing = 0.5f, float cubeSize = 0.1f)
-{    
-
-    Vector3f corner(-(((cubeCountX-1) * cubeSpacing) + cubeSize) * 0.5f,
-                    -(((cubeCountY-1) * cubeSpacing) + cubeSize) * 0.5f,
-                    -(((cubeCountZ-1) * cubeSpacing) + cubeSize) * 0.5f);                    
-    corner += offset;
-
-    Vector3f pos = corner;
-    
-    for (int i = 0; i < cubeCountX; i++)
-    {
-        // Create a new model for each 'plane' of cubes so we don't exceed
-        // the vert size limit.
-        Ptr<Model> model = *new Model();
-        scene->World.Add(model);
-
-        if (fill)
-            model->Fill = fill;
-
-        for (int j = 0; j < cubeCountY; j++)
-        {
-            for (int k = 0; k < cubeCountZ; k++)
-            {
-                model->AddBox(0xFFFFFFFF, pos, Vector3f(cubeSize, cubeSize, cubeSize));
-                pos.z += cubeSpacing;
-            }
-
-            pos.z = corner.z;
-            pos.y += cubeSpacing;
-        }
-
-        pos.y = corner.y;
-        pos.x += cubeSpacing;
-    }
-}
-
 Fill* CreateTexureFill(RenderDevice* prender, const String& filename)
 {
     Ptr<File>    imageFile = *new SysFile(filename);
@@ -110,82 +70,6 @@ Fill* CreateTexureFill(RenderDevice* prender, const String& filename)
     return fill;
 }
 
-
-// Loads the scene data
-void OculusWorldDemoApp::PopulateScene(const char *fileName)
-{    
-    XmlHandler xmlHandler;         
-    if(!xmlHandler.ReadFile(fileName, pRender, &MainScene, &CollisionModels, &GroundCollisionModels))
-    {
-        Menu.SetPopupMessage("FILE LOAD FAILED");
-        Menu.SetPopupTimeout(10.0f, true);
-    }    
-
-    MainScene.SetAmbient(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
-    
-    // Handy cube.
-    Ptr<Model> smallGreenCubeModel = *Model::CreateBox(Color(0, 255, 0, 255), Vector3f(0.0f, 0.0f, 0.0f), Vector3f(0.004f, 0.004f, 0.004f));
-    SmallGreenCube.World.Add(smallGreenCubeModel);
-
-    String mainFilePathNoExtension = MainFilePath;
-    mainFilePathNoExtension.StripExtension();
-
-
-    // 10x10x10 cubes.
-    Ptr<Fill> fillR = *CreateTexureFill(pRender, mainFilePathNoExtension + "_redCube.tga");
-    PopulateCubeFieldScene(&RedCubesScene, fillR.GetPtr(), 10, 10, 10, Vector3f(0.0f, 0.0f, 0.0f), 0.4f);
-
-    // 10x10x10 cubes.
-    Ptr<Fill> fillB = *CreateTexureFill(pRender, mainFilePathNoExtension + "_blueCube.tga");
-    PopulateCubeFieldScene(&BlueCubesScene, fillB.GetPtr(), 10, 10, 10, Vector3f(0.0f, 0.0f, 0.0f), 0.4f);
-
-	// Anna: OculusWorldDemo/Assets/Tuscany/Tuscany_OculusCube.tga file needs to be added    
-    Ptr<Fill> imageFill = *CreateTexureFill(pRender, mainFilePathNoExtension + "_OculusCube.tga");
-    PopulateCubeFieldScene(&OculusCubesScene, imageFill.GetPtr(), 11, 4, 35, Vector3f(0.0f, 0.0f, -6.0f), 0.5f);
-
-	
-    float r = 0.01f;
-    Ptr<Model> purpleCubesModel = *new Model(Prim_Triangles);
-	for (int i = 0; i < 10; i++)
-		for (int j = 0; j < 10; j++)
-			for (int k = 0; k < 10; k++)
-	            purpleCubesModel->AddSolidColorBox(i*0.25f-1.25f-r,j*0.25f-1.25f-r,k*0.25f-1.25f-r,
-				                                   i*0.25f-1.25f+r,j*0.25f-1.25f+r,k*0.25f-1.25f+r,0xFF9F009F);
-}
-
-
-void OculusWorldDemoApp::PopulatePreloadScene()
-{
-    // Load-screen screen shot image
-    String fileName = MainFilePath;
-    fileName.StripExtension();
-
-    Ptr<File>    imageFile = *new SysFile(fileName + "_redCube.tga");
-    Ptr<Texture> imageTex;
-    if (imageFile->IsValid())
-        imageTex = *LoadTextureTga(pRender, imageFile);
-
-    // Image is rendered as a single quad.
-    if (imageTex)
-    {
-        imageTex->SetSampleMode(Sample_Anisotropic|Sample_Repeat);
-        Ptr<Model> m = *new Model(Prim_Triangles);        
-        m->AddVertex(-0.5f,  0.5f,  0.0f, Color(255,255,255,255), 0.0f, 0.0f);
-        m->AddVertex( 0.5f,  0.5f,  0.0f, Color(255,255,255,255), 1.0f, 0.0f);
-        m->AddVertex( 0.5f, -0.5f,  0.0f, Color(255,255,255,255), 1.0f, 1.0f);
-        m->AddVertex(-0.5f, -0.5f,  0.0f, Color(255,255,255,255), 0.0f, 1.0f);
-        m->AddTriangle(2,1,0);
-        m->AddTriangle(0,3,2);
-
-        Ptr<ShaderFill> fill = *new ShaderFill(*pRender->CreateShaderSet());
-        fill->GetShaders()->SetShader(pRender->LoadBuiltinShader(Shader_Vertex, VShader_MVP)); 
-        fill->GetShaders()->SetShader(pRender->LoadBuiltinShader(Shader_Fragment, FShader_Texture)); 
-        fill->SetTexture(0, imageTex);
-        m->Fill = fill;
-
-        LoadingScene.World.Add(m);
-    }
-}
 
 void OculusWorldDemoApp::PopulateVideo1() {
   std::vector<String> filenames;
@@ -230,7 +114,7 @@ void OculusWorldDemoApp::PopulateVideo1() {
 }
 
 void OculusWorldDemoApp::InitCapture() {
-  cameras[0] = new cv::VideoCapture(2);
+  cameras[0] = new cv::VideoCapture(0);
   cameras[1] = new cv::VideoCapture(1);
 }
 

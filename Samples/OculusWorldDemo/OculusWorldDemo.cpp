@@ -170,7 +170,6 @@ int OculusWorldDemoApp::OnStartup(int argc, const char** argv)
     // *** Identify Scene File & Prepare for Loading
 
     InitMainFilePath();  
-    PopulatePreloadScene();
     PopulateVideo1();
     InitCapture();
     
@@ -563,6 +562,7 @@ void OculusWorldDemoApp::OnMouseMove(int x, int y, int modifiers)
 
 void OculusWorldDemoApp::OnKey(OVR::KeyCode key, int chr, bool down, int modifiers)
 {
+  printf("%f\n", (float)ThePlayer.UserEyeHeight);
     if (Menu.OnKey(key, chr, down, modifiers))
         return;
 
@@ -696,7 +696,6 @@ void OculusWorldDemoApp::OnIdle()
 
     if (LoadingState == LoadingState_DoLoad)
     {
-        PopulateScene(MainFilePath.ToCStr());
         LoadingState = LoadingState_Finished;
         return;
     }    
@@ -1015,8 +1014,8 @@ void OculusWorldDemoApp::RenderEyeView(ovrEyeType eye)
     memset(imgdata, 0, w*h*4);
     for (int i = 0; i < w; ++i)
       for (int j = 0; j < h; ++j) {
-	//imgdata[(h-1-j)*w*4 + i*4  ] = image.at<cv::Vec3b>(j, i)[2];
-	//imgdata[(h-1-j)*w*4 + i*4+1] = image.at<cv::Vec3b>(j, i)[1];
+	imgdata[(h-1-j)*w*4 + i*4  ] = image.at<cv::Vec3b>(j, i)[2];
+	imgdata[(h-1-j)*w*4 + i*4+1] = image.at<cv::Vec3b>(j, i)[1];
 	imgdata[(h-1-j)*w*4 + i*4+2] = image.at<cv::Vec3b>(j, i)[0];
 	imgdata[(h-1-j)*w*4 + i*4+3] = 255;
       }
@@ -1047,10 +1046,10 @@ void OculusWorldDemoApp::RenderEyeView(ovrEyeType eye)
     */
 
     // HUD overlay brought up by spacebar.
-    //RenderTextInfoHud(textHeight);
+    RenderTextInfoHud(textHeight);
 
     // Menu brought up by 
-    //Menu.Render(pRender);
+    Menu.Render(pRender);
     i_iter++;
 }
 

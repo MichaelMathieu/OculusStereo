@@ -172,9 +172,10 @@ void DistortionRenderer::SubmitEye(int eyeId, ovrTexture* eyeTexture)
 	    // because presumably we allow users to realtime adjust the resolution.
         eachEye[eyeId].TextureSize    = tex->OGL.Header.TextureSize;
         eachEye[eyeId].RenderViewport = tex->OGL.Header.RenderViewport;
+	
 
         const ovrEyeRenderDesc& erd = RState.EyeRenderDesc[eyeId];
-    
+    	       
         ovrHmd_GetRenderScaleAndOffset( erd.Fov,
                                         eachEye[eyeId].TextureSize, eachEye[eyeId].RenderViewport,
                                         eachEye[eyeId].UVScaleOffset );
@@ -417,7 +418,7 @@ void DistortionRenderer::initBuffersAndShaders()
         for ( unsigned vertNum = 0; vertNum < meshData.VertexCount; vertNum++ )
         {
             pCurVBVert->Pos.x = pCurOvrVert->Pos.x;
-            pCurVBVert->Pos.y = pCurOvrVert->Pos.y;
+            pCurVBVert->Pos.y = pCurOvrVert->Pos.y+0.5;
             pCurVBVert->TexR  = (*(Vector2f*)&pCurOvrVert->TexR);
             pCurVBVert->TexG  = (*(Vector2f*)&pCurOvrVert->TexG);
             pCurVBVert->TexB  = (*(Vector2f*)&pCurOvrVert->TexB);
